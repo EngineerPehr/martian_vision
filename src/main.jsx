@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './components/Home'
 import ErrorPage from './ErrorPage'
-import Curiosity from './components/Curiosity/Curiosity'
+import Rover from './components/Rover'
 
 const router = createBrowserRouter([
     {
@@ -13,8 +13,8 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
 	{
-		path: 'curiosity/',
-		element: <Curiosity />
+		path: ':rover_name',
+		element: <Rover />
 	}
 ])
 
