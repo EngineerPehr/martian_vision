@@ -18,7 +18,7 @@ export default function Rover() {
             return () => abortController.abort()
         }
         loadData()
-    }, [roverData])
+    }, [rover_name, roverData])
 
     return (
         <div>
