@@ -12,6 +12,7 @@ export default function Photos() {
             try {
                 const data = await getRoverPhotos(rover_name, abortController.signal)
                 setPhotos(data.latest_photos)
+                console.log(data.latest_photos)
             } catch (error) {
                 console.log(error.message)
             }
@@ -21,14 +22,23 @@ export default function Photos() {
     }, [rover_name])
 
     const photoList = photos.map((photo, i) => {
+        const camera = `${photo.camera.name} - ${photo.camera.full_name}`
+
         return (
-            <li key={i}>{photo.id}</li>
+            <li key={i}>
+                <div>
+                    <p>Photo ID: {photo.id}</p>
+                    <p>Date Taken: {photo.earth_date}</p>
+                    <p>Camera: {camera} </p>
+                    <img src={photo.img_src} alt={`Image ID: ${photo.id}`}/>
+                </div>
+            </li>
         )
     })
 
     return (
         <main>
-            <p>Photos:</p>
+            <p>{rover_name} Photos:</p>
             <ul>{photoList}</ul>
         </main>
     )
