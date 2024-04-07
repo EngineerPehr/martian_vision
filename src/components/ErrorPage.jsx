@@ -5,10 +5,10 @@ export default function ErrorPage() {
     console.error(error)
 
     return (
-        <div>
+        <main>
             <h1>Error</h1>
             <p>An error has occured</p>
             <p><i>{error.statusText || error.message}</i></p>
-        </div>
+        </main>
     )
 }

@@ -22,7 +22,7 @@ export default function Rover() {
     }, [rover_name, roverData])
 
     return (
-        <div>
+        <main>
             <h1>{roverData.name}</h1>
             <p>Launch Date: {roverData.launch_date}</p>
             <p>Landing Date: {roverData.landing_date}</p>
@@ -30,8 +30,8 @@ export default function Rover() {
             <p>Days on Mars (Sols): {roverData.max_sol}</p>
             <p>Number of Photos Taken: {roverData.total_photos}</p>
             <div>
-                <Link to={`${rover_name}/photos`}>See Photos</Link>
+                <Link to={`photos`}>See Photos</Link>
             </div>
-        </div>
+        </main>
     )
 }
