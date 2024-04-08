@@ -10,10 +10,19 @@ export async function getRoverData(rover_name, signal) {
     return data
 }
 
-export async function getRoverPhotos(rover_name, signal) {
+export async function getLatestPhotos(rover_name, signal) {
     const url = new URL(`${API_BASE_URL}/rovers/${rover_name}/latest_photos?page=1`)
     const response = await fetch(url, {headers, signal})
     const data = await response.json()
     return data
 }
 
+export async function getFilteredPhotos(rover_name, filters, signal) {
+    const earth_date = filters.earth_date ? `&earth_date=${filters.earth_date}` : ``
+    const sol = filters.sol ? `&sol=${filters.sol}` : ``
+    const camera = filters.camera && filters.camera != 'all' ? `&camera=${filters.camera}` : ``
+    const url = new URL(`${API_BASE_URL}/rovers/${rover_name}/photos?page=1${earth_date}${sol}${camera}`)
+    const response = await fetch(url, {headers, signal})
+    const data = await response.json()
+    return data
+}

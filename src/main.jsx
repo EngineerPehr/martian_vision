@@ -5,7 +5,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './components/Home'
 import ErrorPage from './components/ErrorPage'
 import Rover from './components/Rover'
-import Photos from './components/Photos'
 
 const router = createBrowserRouter([
     {
@@ -16,11 +15,7 @@ const router = createBrowserRouter([
 	{
 		path: ':rover_name',
 		element: <Rover />,
-	},
-    {
-        path: ':rover_name/photos',
-        element: <Photos />
-    }
+	}
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(

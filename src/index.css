@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::-webkit-scrollbar {
+    width: 0.75rem;
+}
+ 
+::-webkit-scrollbar-track {
+    background: #57534e;
+    border-radius: 1rem;
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #1c1917;
+}
+ 
+::-webkit-scrollbar-thumb:hover {
+    background: #d6d3d1;
+    border-radius: 1rem;
+}
+
+::-webkit-scrollbar-track:hover {
+    background: #78716c;
+    border-radius: 1rem;
+}
+
+::-webkit-calendar-picker-indicator {
+    filter:invert(1)
+}
