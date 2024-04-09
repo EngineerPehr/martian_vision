@@ -1,115 +1,98 @@
 import { useEffect, useState } from "react"
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { getLatestPhotos, getRoverData } from "../util/api"
+import 'ldrs/grid'
 
 export default function Rover() {
-    const defaultFilters = {
-        sol: 0,
-        earth_date: '',
-        camera: ''
-    }
     const { rover_name } = useParams()
     const [roverData, setRoverData] = useState({})
     const [photos, setPhotos] = useState([])
-    const [cameras, setCameras] = useState([])
-    const [lastDate, setLastDate] = useState('')
-    const [filters, setFilters] = useState(defaultFilters)
+    const [selectedPhoto, setSelectedPhoto] = useState({})
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     
     useEffect(() => {
         const loadData = async () => {
-            const cameraSet = new Set()
+            setIsLoading(true)
             const abortController = new AbortController()
             try {
                 const rover_data = await getRoverData(rover_name, abortController.signal)
                 const photoData = await getLatestPhotos(rover_name, abortController.signal)
                 setRoverData(rover_data.photo_manifest)
                 setPhotos(photoData.latest_photos)
-                setLastDate(photos[0].earth_date)
-                roverData.photos.forEach((photo) => {
-                    photo.cameras.forEach((camera) => {
-                        cameraSet.add(camera)
-                    })
-                })
-                setCameras(Array.from(cameraSet))
             } catch (error) {
                 console.log(error.message)
+            } finally {
+                setIsLoading(false)
             }
             return () => abortController.abort()
         }
         loadData()
-    }, [rover_name, roverData, photos])
+    }, [rover_name])
 
-    function changeHandler(event) {
-        setFilters({...filters, [event.target.name]: event.target.value})
+    const openModal = (event) => {
+        const photoIndex = event.target.id
+        setSelectedPhoto(photos[photoIndex])
+        setIsModalOpen(true)
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false)
+        setSelectedPhoto({})
     }
 
     const photoList = photos?.map((photo, i) => {
         const camera = `${photo.camera.name} - ${photo.camera.full_name}`
         return (
-            <div key={i} className='my-3 mx-auto w-2/3 rounded-md shadow-md shadow-black group bg-stone-300 text-black'>
-                <div className='p-2'>
-                    <p>Photo ID: {photo.id}</p>
-                    <p>Date Taken: {photo.earth_date}</p>
-                    <p>Camera: {camera} </p>
+            <div key={i} id={i} className='col-span-2 xl:col-span-1 p-2 border-2 rounded-md bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-400' onClick={openModal}>
+                <div id={i} className="flex flex-row justify-around">
+                    <img id={i} src={photo.img_src} alt={`Image ID: ${photo.id}`} className='w-1/3 h-44 rounded-md border-2 border-black'/>
+                    <div id={i} className='w-2/3 p-2 text-lg text-center'>
+                        <p id={i}>{`${i + 1} of ${photos.length}`}</p>
+                        <p id={i}>Photo ID: {photo.id}</p>
+                        <p id={i}>Date Taken: {photo.earth_date}</p>
+                        <p id={i}>Camera: {camera} </p>
+                    </div>
                 </div>
-                <img src={photo.img_src} alt={`Image ID: ${photo.id}`} className='p-1 mx-auto h-5/6 w-5/6'/>
             </div>
-        )
-    })
-
-    const cameraList = cameras?.map((camera, i) => {
-        return (
-            <option key={i} value={camera}>{camera}</option>
         )
     })
 
     return (
         <>
-            <header className='w-full h-20 bg-stone-700'>
-                <h1 className='text-center text-6xl'>Rover - {roverData.name}</h1>
+            <header className='w-full h-20 bg-stone-700 py-1'>
+                <h1 className='text-center text-6xl'>{roverData.name}</h1>
             </header>
-            <main className="w-full">
+            <main className="w-full my-1">
+                {isLoading && (
+                    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-stone-800 bg-opacity-90 overflow-auto" onClick={closeModal}>
+                        <l-grid color='white' size='85'></l-grid>
+                    </div>
+                )}
                 <div className="py-2 px-3 text-center">
                     <h2 className="text-5xl">Misson Info:</h2>
                     <hr className="my-3" />
-                    <p className="text-4xl my-2">- Launch Date: {roverData.launch_date}</p>
-                    <p className="text-4xl my-2">- Landing Date: {roverData.landing_date}</p>
-                    <p className="text-4xl my-2">- Mission Status: {roverData.status}</p>
-                    <p className="text-4xl my-2">- Days on Mars (Sols): {roverData.max_sol}</p>
-                    <p className="text-4xl my-2">- Photos Taken: {roverData.total_photos}</p>
+                    <p className="text-4xl my-2">Launch Date: {roverData.launch_date}</p>
+                    <p className="text-4xl my-2">Landing Date: {roverData.landing_date}</p>
+                    <p className="text-4xl my-2">Mission Status: {roverData.status}</p>
+                    <p className="text-4xl my-2">Martian Days (Sols): {roverData.max_sol}</p>
+                    <p className="text-4xl my-2">Photos Taken: {roverData.total_photos}</p>
                 </div>
-                <hr className="my-3 mx-3 border-double" />
-                <div className="py-2 px-3">
-                    <h2 className="text-4xl text-center">Photos: </h2>
-                    <div className="mt-3">
-                        <form>
-                            <div className="flex flex-row justify-around">
-                                <div className="">
-                                    <label htmlFor="sol">Sol:</label>
-                                    <input name="sol" type="number" max={roverData.max_sol} value={filters.sol} className="bg-slate-800 rounded-md shadow-md shadow-black  px-2 py-1"/>
-                                </div>
-                                <div>
-                                    <label htmlFor="earth_date">Earth Date:</label>
-                                    <input name="earth_date" type="date" max={lastDate} min={roverData.landing_date} value={filters.earth_date} className="bg-slate-800 rounded-md shadow-md shadow-black  px-2 py-1"/>
-                                </div>
-                                <div>
-                                    <label htmlFor="camera">Camera:</label>
-                                    <select name="camera" className="bg-slate-800 rounded-md shadow-md shadow-black px-2 py-1">
-                                        <option value='all'>-- ALL --</option>
-                                        {cameraList}
-                                    </select>
-                                </div>
-                                <div>
-                                    <button>Apply</button>
-                                    <button>Clear</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                <hr className="my-3 mx-3" />
+                <div className="px-3">
+                    <h2 className="text-4xl text-center">Latest Photos:</h2>
                     <hr className="my-3" />
-                    <div>
-                        {photoList}
-                    </div>
+                    {isModalOpen ? 
+                        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 overflow-auto" onClick={closeModal}>
+                            <div className="bg-white h-5/6-md mx-4 p-4 rounded-lg shadow-lg">
+                                <img src={selectedPhoto.img_src} alt={`Image ID: ${selectedPhoto.id}`} className='w-full-md h-full-md' />
+                            </div>
+                        </div>
+                    :
+                        <div className="grid grid-cols-2 gap-2">
+                            {photoList}
+                        </div>
+                    }
                 </div>
             </main>
             <footer className='h-10 w-full bg-stone-700 py-2'>
