@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from 'react-router-dom'
-import { getLatestPhotos, getRoverData } from "../util/api"
+import { getLatestPhotos, getPhotosByEarthDate, getPhotosBySol, getRoverData } from "../util/api"
 import 'ldrs/grid'
 
 export default function Rover() {
@@ -10,6 +10,7 @@ export default function Rover() {
     const [selectedPhoto, setSelectedPhoto] = useState({})
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [selectedRadio, setSelectedRadio] = useState('')
     
     useEffect(() => {
         const loadData = async () => {
@@ -20,6 +21,7 @@ export default function Rover() {
                 const photoData = await getLatestPhotos(rover_name, abortController.signal)
                 setRoverData(rover_data.photo_manifest)
                 setPhotos(photoData.latest_photos)
+                
             } catch (error) {
                 console.log(error.message)
             } finally {
@@ -39,6 +41,54 @@ export default function Rover() {
     const closeModal = () => {
         setIsModalOpen(false)
         setSelectedPhoto({})
+    }
+
+    const isRadioSelected = (value) => value === selectedRadio
+
+    const handleRadio = (event) => setSelectedRadio(event.currentTarget.value)
+
+    const searchBySol = async () => {
+        setIsLoading(true)
+        const abortController = new AbortController()
+        const sol = document.getElementById('sol_search').value
+        try {
+            const data = await getPhotosBySol(rover_name, sol, abortController.signal)
+            setPhotos(data.photos)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        }
+        return () => abortController.abort()
+    }
+
+    const searchByEarthDate = async () => {
+        setIsLoading(true)
+        const abortController = new AbortController()
+        const earth_date = document.getElementById('earth_search').value
+        try {
+            const data = await getPhotosByEarthDate(rover_name, earth_date, abortController.signal)
+            setPhotos(data.photos)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        }
+        return () => abortController.abort()
+    }
+
+    const resetToLatest = async () => {
+        setIsLoading(true)
+        const abortController = new AbortController()
+        try {
+            const photoData = await getLatestPhotos(rover_name, abortController.signal)
+            setPhotos(photoData.latest_photos)
+        } catch (error) {
+            console.log(error.message)
+        } finally {
+            setIsLoading(false)
+        }
+        return () => abortController.abort()
     }
 
     const photoList = photos?.map((photo, i) => {
@@ -80,18 +130,62 @@ export default function Rover() {
                 </div>
                 <hr className="my-3 mx-3" />
                 <div className="px-3">
-                    <h2 className="text-4xl text-center">Latest Photos:</h2>
-                    <hr className="my-3" />
-                    {isModalOpen ? 
-                        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 overflow-auto" onClick={closeModal}>
-                            <div className="bg-white h-5/6-md mx-4 p-4 rounded-lg shadow-lg">
-                                <img src={selectedPhoto.img_src} alt={`Image ID: ${selectedPhoto.id}`} className='w-full-md h-full-md' />
+                    <h2 className="text-4xl text-center">Photos:</h2>
+                    <hr className="my-3 mx-3" />
+                    <h3 className="text-2xl text-center">Search By:</h3>
+                    <div className="my-3">
+                        <div className="flex flex-row justify-center my-2">
+                            <div className="mx-5">
+                                <input type="radio" name="filters" id="sol" value='sol' checked={isRadioSelected('sol')} onChange={handleRadio} />
+                                <label htmlFor="sol" className="mx-1 text-xl">Sol</label>
+                            </div>
+                            <div className="mx-5">
+                                <input type="radio" name="filters" id="earth_date" value='earth_date' checked={isRadioSelected('earth_date')} onChange={handleRadio} />
+                                <label htmlFor="earth_date" className="mx-1 text-xl">Earth Date</label>
                             </div>
                         </div>
-                    :
+                        <div className="flex flex-row justify-center">
+                            {selectedRadio == 'sol' && (
+                                <div className="flex flex-row p-1">
+                                    <div>
+                                        <label htmlFor="sol_search" className="mx-1 text-xl">Sol:</label>
+                                        <input name="sol_search" id="sol_search" type="number" required min={0} max={roverData.max_sol} className="w-20 pl-2 mx-2 bg-stone-700 hover:bg-stone-500 hover:border rounded-md" />
+                                    </div>
+                                    <div className="pt-1">
+                                        <button className="w-24 mx-2 border rounded-md bg-stone-700 hover:bg-stone-500 hover:shadow-black hover:shadow-md" onClick={searchBySol}>Search</button>
+                                        <button className="w-24 mx-2 border rounded-md bg-stone-700 hover:bg-stone-500 hover:shadow-black hover:shadow-md" onClick={resetToLatest}>Latest</button>
+                                    </div>
+                                </div>
+                            )}
+                            {selectedRadio == 'earth_date' && (
+                                <div className="flex flex-row p-1">
+                                    <div>
+                                        <label htmlFor="earth_search" className="mx-1 text-xl">Earth Date:</label>
+                                        <input name="earth_search" id="earth_search" type="date" required min={roverData.landing_date} className="w-32 pl-2 mx-2 bg-stone-700 hover:bg-stone-500 hover:border rounded-md" />
+                                    </div>
+                                    <div className="pt-1">
+                                        <button className="w-24 mx-2 my-1 border rounded-md bg-stone-700 hover:bg-stone-500 hover:shadow-black hover:shadow-md" onClick={searchByEarthDate}>Search</button>
+                                        <button className="w-24 mx-2 border rounded-md bg-stone-700 hover:bg-stone-500 hover:shadow-black hover:shadow-md" onClick={resetToLatest}>Latest</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    {photos.length < 1 && (
+                        <div className="my-5">
+                            <p className="text-center text-4xl text-red-500">No photos available.</p>
+                        </div>
+                    )}
+                    {isModalOpen ? 
+                        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 overflow-auto" onClick={closeModal}>
+                            <div className="bg-white h-5/6 mx-4 p-4 rounded-lg shadow-lg">
+                                <img src={selectedPhoto.img_src} alt={`Image ID: ${selectedPhoto.id}`} className='w-full h-full' />
+                            </div>
+                        </div>
+                    :  
                         <div className="grid grid-cols-2 gap-2">
                             {photoList}
-                        </div>
+                        </div>  
                     }
                 </div>
             </main>
