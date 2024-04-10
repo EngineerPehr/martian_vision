@@ -3,14 +3,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './components/Home'
-import ErrorPage from './components/ErrorPage'
 import Rover from './components/Rover'
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <Home />,
-        errorElement: <ErrorPage />,
     },
 	{
 		path: ':rover_name',

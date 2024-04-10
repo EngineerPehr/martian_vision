@@ -2,16 +2,45 @@ import { Link } from 'react-router-dom'
 
 export default function Home() {
     return (
-        <main>
-            <p>Welcome to Martian Vision.</p>
-            <p>This site will let you explore the Martian surface through the eyes of the various rovers.</p>
-            <p>Use the list below to choose one of the 4 rovers:</p>
-            <ul>
-                <li><Link to={`/perseverance`}>Perserverance</Link></li>
-                <li><Link to={`/curiosity`}>Curiosity</Link></li>
-                <li><Link to={`/opportunity`}>Opportunity</Link></li>
-                <li><Link to={`/spirit`}>Spirit</Link></li>
-            </ul>
-        </main>
+        <>
+            <header className='w-full h-20 bg-stone-700 py-1'>
+                <h1 className='text-center text-6xl'>Martian Vision</h1>
+            </header>
+            <main className="w-full my-1">
+                <div className="py-2 px-3 text-center">
+                    <h2 className="text-5xl">Select a Rover:</h2>
+                </div>
+                <hr className="my-3 mx-3" />
+                <div className="flex flex-col items-center px-3">
+                    <Link to={'/curiosity'}>
+                        <div className='size-96 mx-auto border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
+                            <h3 className='text-center text-3xl mb-2'>Curiosity</h3>
+                            <img src='/curiosity.jpg' alt='Curiosity' className='w-full h-auto p-1' />
+                        </div>
+                    </Link>
+                    <Link to={'/opportunity'}>
+                        <div className='size-96 border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
+                            <h3 className='text-center text-3xl mb-2'>Opportunity</h3>  
+                            <img src='/opportunity.jpg' alt='Opportunity' className='w-full h-full' />
+                        </div>
+                    </Link>
+                    <Link to={'/perseverance'}>
+                        <div className='size-96 mx-auto border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
+                            <h3 className='text-center text-3xl mb-2'>Perseverance</h3>
+                            <img src='/perseverance.gif' alt='Perseverance' className='w-full h-full' />
+                        </div>
+                    </Link>
+                    <Link to={'/spirit'}>
+                        <div className='size-96 border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
+                            <h3 className='text-center text-3xl mb-2'>Spirit</h3>
+                            <img src='/spirit.jpg' alt='Spirit' className='w-full h-full' />
+                        </div>
+                    </Link>
+                </div>
+            </main>
+            <footer className='h-10 w-full bg-stone-700 py-2'>
+                <p className='text-center'>&copy; 2024 Obelisk Coding</p>
+            </footer>
+        </>
     )
 }
