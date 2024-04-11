@@ -15,25 +15,25 @@ export default function Home() {
                     <Link to={'/curiosity'}>
                         <div className='size-96 mx-auto border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
                             <h3 className='text-center text-3xl mb-2'>Curiosity</h3>
-                            <img src='/curiosity.jpg' alt='Curiosity' className='w-full h-auto p-1' />
+                            <img src='/curiosity.jpg' alt='Curiosity' className='size-80 mx-auto' />
                         </div>
                     </Link>
                     <Link to={'/opportunity'}>
                         <div className='size-96 border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
                             <h3 className='text-center text-3xl mb-2'>Opportunity</h3>  
-                            <img src='/opportunity.jpg' alt='Opportunity' className='w-full h-full' />
+                            <img src='/opportunity.jpg' alt='Opportunity' className='size-80 mx-auto' />
                         </div>
                     </Link>
                     <Link to={'/perseverance'}>
                         <div className='size-96 mx-auto border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
                             <h3 className='text-center text-3xl mb-2'>Perseverance</h3>
-                            <img src='/perseverance.gif' alt='Perseverance' className='w-full h-full' />
+                            <img src='/perseverance.gif' alt='Perseverance' className='size-80 mx-auto' />
                         </div>
                     </Link>
                     <Link to={'/spirit'}>
                         <div className='size-96 border-2 rounded-md my-2 bg-stone-700 hover:bg-stone-500 shadow-md shadow-black hover:shadow-stone-500'>
                             <h3 className='text-center text-3xl mb-2'>Spirit</h3>
-                            <img src='/spirit.jpg' alt='Spirit' className='w-full h-full' />
+                            <img src='/spirit.jpg' alt='Spirit' className='size-80 mx-auto' />
                         </div>
                     </Link>
                 </div>
